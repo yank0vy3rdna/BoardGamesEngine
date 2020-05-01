@@ -34,12 +34,12 @@ class GameLoader:
             if not os.path.exists(path + os.path.sep + asset['face_image']):
                 raise Exception("Face image not found")
             asset['face_base64'] = base64.b64encode(
-                open(path + os.path.sep + asset['face_image'], 'rb').read())
+                open(path + os.path.sep + asset['face_image'], 'rb').read()).decode(encoding='ascii')
         if 'back_image' in asset:
             if not os.path.exists(path + os.path.sep + asset['back_image']):
                 raise Exception("Back image not found")
             asset['back_base64'] = base64.b64encode(
-                open(path + os.path.sep + asset['back_image'], 'rb').read())
+                open(path + os.path.sep + asset['back_image'], 'rb').read()).decode(encoding='ascii')
         self.game['assets'][asset['name']] = asset
 
     def parse_playertype(self, path):
