@@ -7,7 +7,6 @@ import base64
 class GameLoader:
     path = None
     game = {'assets': {}, 'player_types': {}, 'script': ''}
-    user = 1
     is_path_true = False
 
     def get_game(self):
@@ -53,13 +52,14 @@ class GameLoader:
     def get_script(self):
         self.game['script'] = open(self.path + os.path.sep + "main.py").read()
 
-    def __init__(self, archive_file: str):
+    def __init__(self, archive_file: str, lobby_id: int):
         self.is_path_true = os.path.exists(archive_file) \
                             and len(archive_file.split('.')) > 1 \
                             and archive_file.split('.')[1] == 'zip'
         if not self.is_path_true:
             raise Exception("Path to zip file broken")
-        self.path = 'board_games/content/users/{}'.format(self.user)
+        self.path = 'board_games' + os.path.sep + 'content' + os.path.sep + 'lobbies' + os.path.sep + str(lobby_id)
+        self.lobby_id = lobby_id
 
         self.extract_zip(archive_file)
 
