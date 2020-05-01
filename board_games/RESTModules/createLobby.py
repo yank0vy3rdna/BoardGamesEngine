@@ -1,23 +1,21 @@
-from flask import Flask, request
+import time
 import os
-import base64
 import json
-from werkzeug.utils import secure_filename
-import board_games.DataStorage as ds
-import board_games.game.GameLoader as gl
-app = Flask(__name__)
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-@app.route('/board_games/createLobby', methods=['POST'])
-def createLobby():
-    file = base64.b64decode(request.files['file']).decode("UTF-8")
-    filename = secure_filename(file.filename)
-    try:
-        lobby_id = ds.free_lobby
-        lobby = gl.GameLoader(file, lobby_id)
-        ds.Lobby(lobby.game, [], [])
-        path = "board_games" + os.path.sep + "lobbies" + os.path.sep + "lobby_" + lobby_id + os.path.sep + "file.zip"
-        file.save(os.path.join(path))
-        return json.encoder(lobby_id)
-    except:
-        pass
+from board_games.DataStorage import DataStorage
+from board_games.game.GameLoader import GameLoader
 
+
+def createLobby_module(file):
+    lobby_id = int(time.time())
+    path = 'board_games' + os.path.sep + 'content' + os.path.sep + 'lobbies' + os.path.sep + str(
+        lobby_id) + os.path.sep + 'file.zip'
+    file.save(path)
+    dataStorage = DataStorage()
+    dataStorage.initDB()
+    try:
+        game_loader = GameLoader(file, lobby_id)
+        dataStorage.createLobby(game_loader.get_game(), lobby_id)
+        dataStorage.closeDB()
+        return json.dumps({'lobby_id': lobby_id})
+    except Exception as e:
+        return json.dumps({'status': 1, 'error': str(e)})

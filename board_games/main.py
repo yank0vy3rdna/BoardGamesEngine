@@ -35,7 +35,7 @@ game['scene']={
 from board_games.DataStorage import DataStorage
 dataStorage = DataStorage()
 dataStorage.initDB()
-lobby_id = dataStorage.createLobby(game)
+lobby_id = dataStorage.createLobby(game, int(time.time()))
 a = dataStorage.get_info(lobby_id)
 print(dataStorage.isExists(lobby_id))
 print(dataStorage.isExists(-1))

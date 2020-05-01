@@ -19,8 +19,7 @@ class DataStorage:
         self.conn.close()
 
     # lobby_id, game, players, parameters = None
-    def createLobby(self, game) -> int:
-        lobby_id = int(time.time())
+    def createLobby(self, game, lobby_id: int) -> int:
         print(json.dumps(game))
         self.conn.cursor().execute('INSERT INTO main.lobbies (id, game) VALUES (?, ?)',
                                    (str(lobby_id), json.dumps(game)))
