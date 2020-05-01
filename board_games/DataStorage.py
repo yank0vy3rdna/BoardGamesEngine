@@ -45,6 +45,11 @@ class Lobby:
         self.parameters = row['parameters']
         self.game = json.loads(self.parameters)
         return self.lobby_id, self.game
+    def update(self, new_game):
+        self.game = new_game
+        cursor.execute('UPDATE lobbies SET game = ? WHERE id = ?', (self.game, self.lobby_id))
+        conn.commit()
+
     '''
     def __del__(self):
         lobbies[self.lobby_id] = None
@@ -56,3 +61,9 @@ class Lobby:
         # super(Lobby, self).__del__()
 def get(id):
     return lobbies[id].get_info() #id, game
+def update(id, game):
+    lobbies[id].update()
+def isExists(id):
+    return lobbies[id] != None
+
+#update, check_is_exists
