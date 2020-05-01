@@ -1,7 +1,7 @@
 import sqlite3 as sql
 import os
 
-conn = sql.connect("content" + os.path.sep + "Database.db")
+conn = sql.connect("board_games" + os.path.sep + "content" + os.path.sep + "Database.db")
 
 cursor = conn.cursor()
 lobbies = dict()
