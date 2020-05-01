@@ -65,9 +65,11 @@ def get(id):
 def update(id, game):
     lobbies[id].update(game)
 def isExists(id):
-    try:
-        return lobbies[id] != None
-    except:
+    cursor.execute('SELECT * FROM lobbies WHERE id = ?', (str(id)))
+    row = cursor.fetchone()
+    if(row):
+        return True
+    else:
         return False
 
 #update, check_is_exists
