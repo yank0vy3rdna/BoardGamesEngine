@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from board_games.RESTModules.getLobbyData import getLobbyData_module
 
 app = Flask(__name__)
@@ -6,12 +6,13 @@ app = Flask(__name__)
 
 @app.route('/board_games')
 def get_page():
-    with open("static/index.html") as f:
+    with open("static/board_games/index.html") as f:
         return f.read()
 
 
-@app.route('/board_games/getLobbyData?lobbyid=123')
-def getLobbyData(lobbyid: int):
+@app.route('/board_games/getLobbyData')
+def getLobbyData():
+    lobbyid = request.args.get('lobbyid')
     return getLobbyData_module(lobbyid)
 
 
