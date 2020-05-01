@@ -6,7 +6,6 @@ conn = sql.connect("board_games" + os.path.sep + "content" + os.path.sep + "Data
 cursor = conn.cursor()
 lobbies = dict()
 free_lobby = 0
-'''
 cursor.execute('CREATE TABLE IF NOT EXISTS lobbies('
                'id INTEGER PRIMARY KEY ON CONFLICT IGNORE,'
                'parameters TEXT)'
@@ -18,7 +17,6 @@ cursor.execute('CREATE TABLE IF NOT EXISTS players('
                'game INT)'
                )
 conn.commit()
-'''
 
 class Lobby:
     patch = ""
@@ -28,7 +26,7 @@ class Lobby:
         global free_lobby, cursor
         self.game = game
         self.players = players
-        self.parameters = parameters#
+        self.parameters = parameters
         self.lobby_id = free_lobby
         free_lobby += 1
         cursor.execute('INSERT INTO lobbies (id, parameters) VALUES (?, ?)', (self.lobby_id, str(self.game)))
@@ -38,16 +36,12 @@ class Lobby:
         conn.commit()
         lobbies[self.lobby_id] = self
     def get_info(self):
-        cursor.execute('SELECT * FROM lobbies WHERE id = ?',
-                       (self.lobby_id))
+        cursor.execute('SELECT * FROM lobbies WHERE id = ?', (str(self.lobby_id)))
         row = cursor.fetchone()
-        self.lobby_id = row['id']
-        self.parameters = row['parameters']
-        self.game = json.loads(self.parameters)
-        return self.lobby_id, self.game
+        return row[2]
     def update(self, new_game):
         self.game = new_game
-        cursor.execute('UPDATE lobbies SET game = ? WHERE id = ?', (self.game, self.lobby_id))
+        cursor.execute('UPDATE lobbies SET parameters = ? WHERE id = ?', (str(self.game), str(self.lobby_id)))
         conn.commit()
 
     '''
@@ -59,11 +53,21 @@ class Lobby:
         conn.commit()
     '''
         # super(Lobby, self).__del__()
+
+
+
+
+def create_Lobby(game, players, parameters):
+    Lobby(game, players, parameters)
+    return free_lobby - 1
 def get(id):
-    return lobbies[id].get_info() #id, game
+    return lobbies[id].get_info()
 def update(id, game):
-    lobbies[id].update()
+    lobbies[id].update(game)
 def isExists(id):
-    return lobbies[id] != None
+    try:
+        return lobbies[id] != None
+    except:
+        return False
 
 #update, check_is_exists
