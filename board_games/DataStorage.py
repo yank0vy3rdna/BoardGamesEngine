@@ -57,9 +57,7 @@ class Lobby:
 
 
 
-def create_Lobby(game, players, parameters):
-    Lobby(game, players, parameters)
-    return free_lobby - 1
+
 def get(id):
     return lobbies[id].get_info()
 def update(id, game):
