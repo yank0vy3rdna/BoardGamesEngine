@@ -1,73 +1,47 @@
 import sqlite3 as sql
 import os
+import time
 import json
-conn = sql.connect("board_games" + os.path.sep + "content" + os.path.sep + "Database.db")
 
-cursor = conn.cursor()
-lobbies = dict()
-free_lobby = 0
-cursor.execute('CREATE TABLE IF NOT EXISTS lobbies('
-               'id INTEGER PRIMARY KEY ON CONFLICT IGNORE,'
-               'parameters TEXT)'
-               )
-conn.commit()
-cursor.execute('CREATE TABLE IF NOT EXISTS players('
-               'id INTEGER PRIMARY KEY,'
-               'name TEXT, '
-               'game INT)'
-               )
-conn.commit()
 
-class Lobby:
-    patch = ""
+class DataStorage:
+
+    def initDB(self):
+        self.conn = sql.connect("board_games" + os.path.sep + "content" + os.path.sep + "Database.db")
+
+        # self.conn.cursor().execute('CREATE TABLE IF NOT EXISTS main.lobbies('
+        #                            'id INTEGER PRIMARY KEY ON CONFLICT IGNORE,'
+        #                            'game BLOB)'
+        #                            )
+        # self.conn.commit()
+
+    def closeDB(self):
+        self.conn.close()
 
     # lobby_id, game, players, parameters = None
-    def __init__(self, game, players, parameters):
-        global free_lobby, cursor
-        self.game = game
-        self.players = players
-        self.parameters = parameters
-        self.lobby_id = free_lobby
-        free_lobby += 1
-        cursor.execute('INSERT INTO lobbies (id, parameters) VALUES (?, ?)', (self.lobby_id, str(self.game)))
-        conn.commit()
-        for player_id in self.players:
-            cursor.execute('UPDATE players SET game = ? WHERE id = ?', (self.lobby_id, player_id))
-        conn.commit()
-        lobbies[self.lobby_id] = self
-    def get_info(self):
-        cursor.execute('SELECT * FROM lobbies WHERE id = ?', (str(self.lobby_id)))
+    def createLobby(self, game) -> int:
+        lobby_id = int(time.time())
+        print(json.dumps(game))
+        self.conn.cursor().execute('INSERT INTO main.lobbies (id, game) VALUES (?, ?)',
+                                   (str(lobby_id), json.dumps(game)))
+        self.conn.commit()
+        return lobby_id
+
+    def get_info(self, lobby_id: int):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT game FROM main.lobbies WHERE id = ?', (str(lobby_id),))
         row = cursor.fetchone()
-        return row[2]
-    def update(self, new_game):
-        self.game = new_game
-        cursor.execute('UPDATE lobbies SET parameters = ? WHERE id = ?', (str(self.game), str(self.lobby_id)))
-        conn.commit()
+        return json.loads(row[0])
 
-    '''
-    def __del__(self):
-        lobbies[self.lobby_id] = None
-        cursor.execute('DELETE FROM lobbies WHERE id = ?', [self.lobby_id])
-        conn.commit()
-        cursor.execute('UPDATE players SET game = -1 WHERE id = ?', [self.lobby_id])
-        conn.commit()
-    '''
-        # super(Lobby, self).__del__()
+    def update(self, lobby_id: int, new_game):
+        self.conn.cursor().execute('UPDATE main.lobbies SET game = ? WHERE id = ?', (json.dumps(new_game), str(lobby_id)))
+        self.conn.commit()
 
-
-
-
-
-def get(id):
-    return lobbies[id].get_info()
-def update(id, game):
-    lobbies[id].update(game)
-def isExists(id):
-    cursor.execute('SELECT * FROM lobbies WHERE id = ?', (str(id)))
-    row = cursor.fetchone()
-    if(row):
-        return True
-    else:
-        return False
-
-#update, check_is_exists
+    def isExists(self, lobby_id: int):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT id FROM main.lobbies WHERE id = ?', (str(lobby_id),))
+        row = cursor.fetchone()
+        if row:
+            return True
+        else:
+            return False

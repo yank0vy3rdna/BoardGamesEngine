@@ -32,6 +32,14 @@ game['scene']={
         }
     }
 }
+from board_games.DataStorage import DataStorage
+dataStorage = DataStorage()
+dataStorage.initDB()
+lobby_id = dataStorage.createLobby(game)
+a = dataStorage.get_info(lobby_id)
+print(dataStorage.isExists(lobby_id))
+print(dataStorage.isExists(-1))
+dataStorage.closeDB()
 import json
 print(json.dumps(game))
 
