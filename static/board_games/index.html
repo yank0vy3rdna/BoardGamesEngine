@@ -1,10 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>Board games</title>
 </head>
 <body>
+<h1>Create lobby</h1>
+<form id="form" enctype = "multipart/form-data">
+         <label>Username: </label>
+         <input id="un" type="text" name="username" />
+         <br>
+         <label>Game file(zip)</label>
+         <input id="file" type = "file" name = "file" accept=".application/zip"/>
+         <br>
+         <input id="button" type = "button" value="Create lobby" onclick="send()"/>
+      </form>
+<script>
+    function getBase64(file) {
+       var reader = new FileReader();
+       reader.readAsDataURL(file);
+       reader.onload = function () {
+         return reader.result;
+       };
+       reader.onerror = function (error) {
+         console.log('Error: ', error);
+       };
+    }
+    send = function () {
+        var un = document.getElementById('un')
+        var fileInput = document.getElementById('file')
+        var button = $(button)
+        if(fileInput.files.length===0){
+            alert('Choose file')
+            return
+        }
+        if(un.value===''){
+            alert('Enter username')
+            return
+        }
 
+        const url = '/board_games/createLobby'
+        var reader = new FileReader()
+        reader.readAsBinaryString(fileInput.files[0])
+        var data = new FormData();
+        data.append("file", fileInput.files[0])
+        data.append("nickname", un.value)
+        data.append("player_id", 132)
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.onload = function () {
+            // do something to response
+            console.log(this.responseText);
+        };
+        xhr.send(data);
+
+    }
+</script>
 </body>
 </html>

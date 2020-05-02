@@ -9,12 +9,6 @@ class DataStorage:
     def initDB(self):
         self.conn = sql.connect("board_games" + os.path.sep + "content" + os.path.sep + "Database.db")
 
-        # self.conn.cursor().execute('CREATE TABLE IF NOT EXISTS main.lobbies('
-        #                            'id INTEGER PRIMARY KEY ON CONFLICT IGNORE,'
-        #                            'game BLOB)'
-        #                            )
-        # self.conn.commit()
-
     def closeDB(self):
         self.conn.close()
 
@@ -26,7 +20,7 @@ class DataStorage:
         self.conn.commit()
         return lobby_id
 
-    def get_info(self, lobby_id: int):
+    def get_game(self, lobby_id: int):
         cursor = self.conn.cursor()
         cursor.execute('SELECT game FROM main.lobbies WHERE id = ?', (str(lobby_id),))
         row = cursor.fetchone()

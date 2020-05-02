@@ -63,12 +63,15 @@ class GameLoader:
 
         self.extract_zip(archive_file)
 
-        self.path = self.path + os.path.sep + \
-                    os.path.split(archive_file)[-1][:-4]
+        self.path = self.path + os.path.sep + 'game'
 
         assets_path = self.get_assets_dirs()
 
-        playertypes_path= self.get_playertypes_path()
+        playertypes_path = self.get_playertypes_path()
+
+        self.game.update(json.load(open(self.path+os.path.sep+'game.json')))
+
+        self.game['players'] = {}
 
         for i in assets_path:
             self.parse_asset(i)
@@ -77,4 +80,3 @@ class GameLoader:
             self.parse_playertype(i)
 
         self.get_script()
-

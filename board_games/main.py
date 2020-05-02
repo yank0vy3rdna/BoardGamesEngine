@@ -3,7 +3,7 @@ from board_games.DataStorage import *
 
 game_loader = GameLoader.GameLoader("board_games" + os.path.sep + "content" + os.path.sep + "game.zip", 28)
 game = game_loader.get_game()
-game['name'] = 'prikol'
+print(json.dumps(game))
 game['players'] = {
     132324: {
         'player_type': 'Human',
@@ -12,7 +12,7 @@ game['players'] = {
         'coins_count': 3
     }
 }
-game['scene']={
+game['scene'] = {
     "map": {
         "card1": {
             "type": "Flamethrower",
@@ -36,7 +36,7 @@ from board_games.DataStorage import DataStorage
 dataStorage = DataStorage()
 dataStorage.initDB()
 lobby_id = dataStorage.createLobby(game, int(time.time()))
-a = dataStorage.get_info(lobby_id)
+a = dataStorage.get_game(lobby_id)
 print(dataStorage.isExists(lobby_id))
 print(dataStorage.isExists(-1))
 dataStorage.closeDB()
