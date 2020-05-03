@@ -15,9 +15,9 @@ def get_page():
         return f.read()
 
 
-@app.route('/board_games/getLobbyData')
+@app.route('/board_games/getLobbyData', methods=['POST'])
 def getLobbyData():
-    lobbyid = request.args.get('lobbyid')
+    lobbyid = request.form.get('lobbyid')
     return getLobbyData_module(lobbyid)
 
 
@@ -31,17 +31,17 @@ def createLobby():
 
 @app.route('/board_games/player_action', methods=['POST'])
 def player_action():
-    lobby_id = request.args.get('lobby_id')
-    player_id = request.args.get('player_id')
-    content = request.json
+    lobby_id = request.form.get('lobby_id')
+    player_id = request.form.get('player_id')
+    content = request.form.get('json')
     return player_action_module(content, lobby_id, player_id)
 
 
-@app.route('/board_games/joinLobby')
+@app.route('/board_games/joinLobby', methods=['POST'])
 def joinLobby():
-    lobby_id = request.args.get('lobby_id')
-    player_id = request.args.get('player_id')
-    nickname = request.args.get('nickname')
+    lobby_id = request.form.get('lobby_id')
+    player_id = request.form.get('player_id')
+    nickname = request.form.get('nickname')
     return joinLobby_module(lobby_id, player_id, nickname)
 
 

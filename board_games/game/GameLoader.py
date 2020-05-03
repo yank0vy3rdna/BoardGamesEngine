@@ -1,3 +1,4 @@
+import time
 from zipfile import ZipFile
 import os
 import json
@@ -6,7 +7,6 @@ import base64
 
 class GameLoader:
     path = None
-    game = {'assets': {}, 'player_types': {}, 'script': ''}
     is_path_true = False
 
     def get_game(self):
@@ -53,6 +53,7 @@ class GameLoader:
         self.game['script'] = open(self.path + os.path.sep + "main.py").read()
 
     def __init__(self, archive_file: str, lobby_id: int):
+        self.game = {'assets': {}, 'player_types': {}, 'script': ''}
         self.is_path_true = os.path.exists(archive_file) \
                             and len(archive_file.split('.')) > 1 \
                             and archive_file.split('.')[1] == 'zip'
@@ -72,7 +73,8 @@ class GameLoader:
         self.game.update(json.load(open(self.path+os.path.sep+'game.json')))
 
         self.game['players'] = {}
-
+        self.game['events'] = []
+        time.sleep(1)
         for i in assets_path:
             self.parse_asset(i)
 

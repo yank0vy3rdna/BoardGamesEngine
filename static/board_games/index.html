@@ -2,59 +2,140 @@
 <html lang="en">
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
     <meta charset="UTF-8">
     <title>Board games</title>
 </head>
 <body>
-<h1>Create lobby</h1>
-<form id="form" enctype = "multipart/form-data">
-         <label>Username: </label>
-         <input id="un" type="text" name="username" />
-         <br>
-         <label>Game file(zip)</label>
-         <input id="file" type = "file" name = "file" accept=".application/zip"/>
-         <br>
-         <input id="button" type = "button" value="Create lobby" onclick="send()"/>
-      </form>
+<div id="begin">
+    <h1>Create lobby</h1>
+    <form id="form" enctype="multipart/form-data">
+        <label>Username: </label>
+        <input id="un" type="text" name="username"/>
+        <br>
+        <label>Game file(zip)</label>
+        <input id="file" type="file" name="file" accept=".application/zip"/>
+        <br>
+        <input id="button" type="button" value="Create lobby" onclick="send()"/>
+        <br>
+        <label id="response"></label>
+    </form>
+    <h1>Or join lobby</h1>
+    <form id="form1" enctype="multipart/form-data">
+        <label>Username: </label>
+        <input id="un1" type="text" name="username"/>
+        <br>
+        <label>Lobby ID: </label>
+        <input id="lobby_id" type="text" name="lobby_id"/>
+        <br>
+        <input id="button1" type="button" value="Join lobby" onclick="send1()"/>
+        <br>
+        <label id="response1"></label>
+    </form>
+</div>
+<div id="game">
+        <input id="button2" type="button" value="update lobby data" onclick="update()"/>
+        <input id="button3" type="button" value="send action" onclick="send_action()"/>
+
+</div>
 <script>
-    function getBase64(file) {
-       var reader = new FileReader();
-       reader.readAsDataURL(file);
-       reader.onload = function () {
-         return reader.result;
-       };
-       reader.onerror = function (error) {
-         console.log('Error: ', error);
-       };
-    }
+    let game;
+    let lobby_id;
     send = function () {
-        var un = document.getElementById('un')
-        var fileInput = document.getElementById('file')
-        var button = $(button)
-        if(fileInput.files.length===0){
+        const un = document.getElementById('un');
+        const fileInput = document.getElementById('file');
+        if (fileInput.files.length === 0) {
             alert('Choose file')
             return
         }
-        if(un.value===''){
+        if (un.value === '') {
             alert('Enter username')
             return
         }
 
         const url = '/board_games/createLobby'
-        var reader = new FileReader()
+        const reader = new FileReader();
+
+        if (Cookies.get('user_id') === undefined) {
+            Cookies.set('user_id', Math.round((new Date()).getTime() / 1000).toString())
+        }
+
         reader.readAsBinaryString(fileInput.files[0])
-        var data = new FormData();
+        const data = new FormData();
         data.append("file", fileInput.files[0])
         data.append("nickname", un.value)
-        data.append("player_id", 132)
-        var xhr = new XMLHttpRequest();
+        data.append("player_id", Cookies.get('user_id'))
+        const xhr = new XMLHttpRequest();
         xhr.open('POST', url, true);
         xhr.onload = function () {
             // do something to response
-            console.log(this.responseText);
+            document.getElementById("response").innerHTML = 'lobby id: ' + JSON.parse(this.responseText)['lobby_id'];
+            document.getElementById("un1").value = document.getElementById("un").value;
+            document.getElementById("lobby_id").value = JSON.parse(this.responseText)['lobby_id'];
         };
         xhr.send(data);
 
+    }
+    update = function () {
+        const url = '/board_games/getLobbyData'
+        const data = new FormData();
+        data.append("lobbyid", lobby_id)
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.onload = function () {
+            game = JSON.parse(this.responseText)
+        };
+        xhr.send(data);
+    }
+    send_action = function () {
+        const url = '/board_games/player_action'
+        if (Cookies.get('user_id') === undefined) {
+            Cookies.set('user_id', Math.round((new Date()).getTime() / 1000).toString())
+        }
+        const data = new FormData();
+        data.append("lobby_id", lobby_id)
+        data.append("player_id", Cookies.get('user_id'))
+        data.append("json", '{"action_type": "move", "from": "koloda1", "to": "player_132324_hand"}')
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.onload = function () {
+            game = JSON.parse(this.responseText)
+        };
+        xhr.send(data);
+    }
+    send1 = function () {
+        const un = document.getElementById('un1');
+        const lid = document.getElementById('lobby_id');
+        if (lid.value === '') {
+            alert('Enter lobby id')
+            return
+        }
+        if (un1.value === '') {
+            alert('Enter username')
+            return
+        }
+
+        const url = '/board_games/joinLobby'
+        if (Cookies.get('user_id') === undefined) {
+            Cookies.set('user_id', Math.round((new Date()).getTime() / 1000).toString())
+        }
+        const data = new FormData();
+        data.append("nickname", un.value)
+        data.append("lobby_id", lid.value)
+        data.append("player_id", Cookies.get('user_id'))
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.onload = function () {
+            if (JSON.parse(this.responseText)['status'] === undefined) {
+                document.getElementById("begin").style = "visibility: hidden;"
+                document.getElementById("game").style = "visibility: visible;"
+                game = JSON.parse(this.responseText)
+                lobby_id = lid.value;
+            } else {
+                document.getElementById("response1").innerHTML = this.responseText;
+            }
+        };
+        xhr.send(data);
     }
 </script>
 </body>
