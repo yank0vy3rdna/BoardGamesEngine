@@ -1,6 +1,8 @@
 from board_games.DataStorage import DataStorage
 import json
 
+from board_games.game.GameInterpreter import interprete
+
 
 def player_action_module(json_str: str, lobby_id: int, player_id: int):
     dataStorage = DataStorage()
@@ -14,6 +16,7 @@ def player_action_module(json_str: str, lobby_id: int, player_id: int):
         dataStorage.closeDB()
         return json.dumps({'status': 1, 'error': 'no player in lobby'})
     game['events'].append(action)
+    interprete(game['__loop__'], game)
     dataStorage.update(lobby_id, game)
     dataStorage.closeDB()
     return json.dumps({'status': 0})

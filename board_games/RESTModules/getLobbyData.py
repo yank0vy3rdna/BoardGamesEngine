@@ -1,6 +1,7 @@
 from board_games.DataStorage import DataStorage
 import json
 
+
 def getLobbyData_module(lobby_id: int):
     dataStorage = DataStorage()
     dataStorage.initDB()

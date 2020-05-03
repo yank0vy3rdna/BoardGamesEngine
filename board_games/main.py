@@ -1,5 +1,6 @@
-from board_games.game import GameLoader, GameInterpreter
+from board_games.game import GameLoader
 from board_games.DataStorage import *
+from board_games.game.GameInterpreter import interprete
 
 game_loader = GameLoader.GameLoader("board_games" + os.path.sep + "content" + os.path.sep + "game.zip", 28)
 game = game_loader.get_game()
@@ -32,6 +33,10 @@ game['scene'] = {
         }
     }
 }
+src = """game.update({"ghafg": "asd"})"""
+
+interprete(src, game)
+
 from board_games.DataStorage import DataStorage
 dataStorage = DataStorage()
 dataStorage.initDB()

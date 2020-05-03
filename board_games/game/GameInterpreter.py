@@ -1,9 +1,9 @@
-from ast import literal_eval
+import evalidate
 
 
-class GameInterpreter:
-    def __init__(self):
-        pass
-
-    def interprete(self, str, objectmodel):
-        literal_eval(str)
+def interprete(str, gamed: dict):
+    bad = ['_', 'import', 'lambda']
+    for i in bad:
+        if i in str:
+            raise Exception('bad source')
+    exec(str, {}, {'game': gamed})

@@ -50,7 +50,8 @@ class GameLoader:
         self.game['player_types'][playertype['name']] = playertype
 
     def get_script(self):
-        self.game['script'] = open(self.path + os.path.sep + "main.py").read()
+        self.game['__main__'] = open(self.path + os.path.sep + "main.py").read()
+        # self.game['__loop__'] = open(self.path + os.path.sep + "loop.py").read()
 
     def __init__(self, archive_file: str, lobby_id: int):
         self.game = {'assets': {}, 'player_types': {}, 'script': ''}
