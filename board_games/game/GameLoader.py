@@ -51,7 +51,7 @@ class GameLoader:
 
     def get_script(self):
         self.game['__main__'] = open(self.path + os.path.sep + "main.py").read()
-        # self.game['__loop__'] = open(self.path + os.path.sep + "loop.py").read()
+        self.game['__loop__'] = open(self.path + os.path.sep + "loop.py").read()
 
     def __init__(self, archive_file: str, lobby_id: int):
         self.game = {'assets': {}, 'player_types': {}, 'script': ''}
@@ -77,6 +77,7 @@ class GameLoader:
         self.game['events'] = []
         time.sleep(1)
         for i in assets_path:
+            print(i)
             self.parse_asset(i)
 
         for i in playertypes_path:

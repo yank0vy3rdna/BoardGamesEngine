@@ -8,6 +8,7 @@ def getLobbyData_module(lobby_id: int):
     if dataStorage.isExists(lobby_id):
         data = dataStorage.get_game(lobby_id)
         dataStorage.closeDB()
+        json.dump(data, open('dump.json', 'w'))
         return json.dumps(data)
     else:
         dataStorage.closeDB()

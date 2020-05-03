@@ -30,6 +30,10 @@ class DataStorage:
         self.conn.cursor().execute('UPDATE main.lobbies SET game = ? WHERE id = ?', (json.dumps(new_game), str(lobby_id)))
         self.conn.commit()
 
+    def delete(self, lobby_id: int):
+        self.conn.cursor().execute('DELETE main.lobbies WHERE id = ?', (str(lobby_id),))
+        self.conn.commit()
+
     def isExists(self, lobby_id: int):
         cursor = self.conn.cursor()
         cursor.execute('SELECT id FROM main.lobbies WHERE id = ?', (str(lobby_id),))

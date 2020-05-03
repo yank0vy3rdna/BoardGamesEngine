@@ -1,4 +1,5 @@
 {
     "name": "Test",
-    "max_players_count": 6
+    "max_players_count": 2,
+    "min_players_count": 2
 }

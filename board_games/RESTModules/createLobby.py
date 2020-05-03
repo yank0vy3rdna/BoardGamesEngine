@@ -5,7 +5,7 @@ from board_games.DataStorage import DataStorage
 from board_games.game.GameLoader import GameLoader
 
 
-def createLobby_module(file, user_id: int, nickname: str):
+def createLobby_module(file):
     lobby_id = int(time.time())  # id лобби - текущий юникстайм
 
     path = 'board_games' + os.path.sep + 'content' + os.path.sep + 'lobbies' + os.path.sep + str(

@@ -36,6 +36,7 @@
 <div id="game">
         <input id="button2" type="button" value="update lobby data" onclick="update()"/>
         <input id="button3" type="button" value="send action" onclick="send_action()"/>
+        <input id="button5" type="button" value="start game" onclick="start_game()"/>
 
 </div>
 <script>
@@ -100,6 +101,21 @@
         xhr.open('POST', url, true);
         xhr.onload = function () {
             game = JSON.parse(this.responseText)
+        };
+        xhr.send(data);
+    }
+    start_game = function () {
+        const url = '/board_games/startGame'
+        if (Cookies.get('user_id') === undefined) {
+            Cookies.set('user_id', Math.round((new Date()).getTime() / 1000).toString())
+        }
+        const data = new FormData();
+        data.append("lobby_id", lobby_id)
+        data.append("player_id", Cookies.get('user_id'))
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.onload = function () {
+            console.log(JSON.parse(this.responseText))
         };
         xhr.send(data);
     }

@@ -1,10 +1,13 @@
 import base64
 
 from flask import Flask, request
+
+from board_games.RESTModules.closeLobby import closeLobby_module
 from board_games.RESTModules.getLobbyData import getLobbyData_module
 from board_games.RESTModules.createLobby import createLobby_module
 from board_games.RESTModules.joinLobby import joinLobby_module
 from board_games.RESTModules.player_action import player_action_module
+from board_games.RESTModules.startGame import startGame_module
 
 app = Flask(__name__)
 
@@ -24,9 +27,7 @@ def getLobbyData():
 @app.route('/board_games/createLobby', methods=['POST'])
 def createLobby():
     file = request.files['file']
-    player_id = request.form.get('player_id')
-    nickname = request.form.get('nickname')
-    return createLobby_module(file, player_id, nickname)
+    return createLobby_module(file)
 
 
 @app.route('/board_games/player_action', methods=['POST'])
@@ -43,6 +44,19 @@ def joinLobby():
     player_id = request.form.get('player_id')
     nickname = request.form.get('nickname')
     return joinLobby_module(lobby_id, player_id, nickname)
+
+
+@app.route('/board_games/closeLobby', methods=['POST'])
+def closeLobby():
+    lobby_id = request.form.get('lobby_id')
+    return closeLobby_module(lobby_id)
+
+
+@app.route('/board_games/startGame', methods=['POST'])
+def startGame():
+    lobby_id = request.form.get('lobby_id')
+    player_id = request.form.get('player_id')
+    return startGame_module(lobby_id, player_id)
 
 
 if __name__ == '__main__':

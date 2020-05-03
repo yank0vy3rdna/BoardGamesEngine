@@ -9,7 +9,7 @@ def joinLobby_module(lobby_id: int, user_id: int, username: str):
     game = dataStorage.get_game(lobby_id)
     user_id_search = None
     for key, value in game['players'].items():
-        if value['username'] == username:
+        if value['nickname'] == username:
             user_id_search = key
             break
     if user_id_search is None:
@@ -23,6 +23,7 @@ def joinLobby_module(lobby_id: int, user_id: int, username: str):
             'player_type': '-',
             'id': user_id,
             'nickname': username,
+            'player_queue': [],
             'is_game_master': game_master
         }})
         dataStorage.update(lobby_id, game)
